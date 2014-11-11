@@ -12,13 +12,31 @@ apply plugin: 'idea'	// InteliJ IDEA integration
 apply plugin: 'project-report' 
 
 //general properties
-version = '4.0.1-SNAPSHOT'
-// java plugin properties
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+version = '1.0.0-SNAPSHOT'
+
+// java plugin properties (until antlr 4.4 we have to set this to 1.6)
+// (https://github.com/antlr/antlr4/issues/487)
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+// temporary fix until we can switch to sourceCompatibility=1.7+
+// (http://stackoverflow.com/a/20779740)
+tasks.withType(JavaCompile) {
+	options.bootClasspath = "$System.env.JAVA_HOME/jre/lib/rt.jar"
+}
 
 // maven-plugin properties
 group = 'com.kiara'
+
+// antlr4-plugin configuration
+// make the Java compile task depend on the antlr4 task
+compileJava.dependsOn antlr4
+// add the generated source files to the list of java sources
+sourceSets.main.java.srcDirs += antlr4.output
+// add antlr4 to classpath
+configurations {
+   compile.extendsFrom antlr4
+}
 
 // In this section you declare where to find the dependencies of your project
 // see also: http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html#N10621
@@ -38,6 +56,9 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.7'
     // It uses JUnit 4.11 to compile for tests
     testCompile 'junit:junit:4.11'
+	// antlr 4.4.1 fixes the "NullUsageProcessor not compatible with java>6" issue
+	// (https://github.com/antlr/antlr4/issues/487). Version not yet in repos.
+	//antlr4 'org.antlr:antlr4:4.4.1' 
 }
 
 // additional tasks e.g. runClient/runServer
