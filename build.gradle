@@ -1,0 +1,59 @@
+// In this section you declare the used plugins
+// community plugins
+plugins {
+    id "me.champeau.gradle.antlr4" version "0.1" // antlr4 community plugin. 
+}
+
+// internal plugins
+apply plugin: 'java'
+apply plugin: 'maven'   // only needed to generate POM or to upload artifacts to maven repos.
+apply plugin: 'eclipse' // Eclipse integration
+apply plugin: 'idea'	// InteliJ IDEA integration
+apply plugin: 'project-report' 
+
+//general properties
+version = '4.0.1-SNAPSHOT'
+// java plugin properties
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+// maven-plugin properties
+group = 'com.kiara'
+
+// In this section you declare where to find the dependencies of your project
+// see also: http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html#N10621
+repositories {
+    // You can declare any Maven/Ivy/file repository here.
+    // e.g. for 'jcenter.bintray.com' for resolving your dependencies use:
+    // jcenter()
+	// and/or use the standard mavenCentral repositoy:
+	mavenCentral()
+	// and/or use use a custom maven repository:
+	// maven { url "http://repo.mycompany.com/maven2" }
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    // The production code uses the SLF4J logging API at compile time
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    // It uses JUnit 4.11 to compile for tests
+    testCompile 'junit:junit:4.11'
+}
+
+// additional tasks e.g. runClient/runServer
+task runClient(type: JavaExec) {
+	group 'running'
+	description 'Runs an example Client'
+	dependsOn 'classes'
+	main = 'com.kiara.example.Client'
+	classpath = sourceSets.main.runtimeClasspath
+	args '' 
+}
+task runServer(type: JavaExec) {
+	group 'running'
+	description 'Runs an example Server'
+	dependsOn 'classes'
+	main = 'com.kiara.example.Server'
+	classpath = sourceSets.main.runtimeClasspath
+	args ''
+}
